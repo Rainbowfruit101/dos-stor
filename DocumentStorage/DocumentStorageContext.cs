@@ -19,7 +19,29 @@ namespace DocumentStorage
         }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+            modelBuilder.Entity<Document>().HasKey(model => model.Id);
+            modelBuilder.Entity<User>().HasKey(model => model.Id);
+            modelBuilder.Entity<Tag>().HasKey(model => model.Id);
+            modelBuilder.Entity<Role>().HasKey(model => model.Id);
             modelBuilder.Entity<User>().HasIndex(user => user.Username).IsUnique();
+            modelBuilder.Entity<User>().HasOne(user => user.Role);
+
+            modelBuilder.Entity<Document>().HasMany(document => document.Tags).WithMany(tag => tag.Documents);
+
+            //modelBuilder.Entity<User>().HasData(
+            //    new User() 
+            //    { 
+            //        Id = Guid.NewGuid(),
+            //        Password = "avavav",
+            //        Username = "Sanya"
+            //    },
+            //    new User()
+            //    {
+            //        Id = Guid.NewGuid(),
+            //        Password = "avavav1",
+            //        Username = "Liza"
+            //    }
+            //    );
         }
 
         public async Task<List<Document>> GetFullDocuments() 

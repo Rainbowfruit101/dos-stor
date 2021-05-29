@@ -17,9 +17,10 @@ namespace DocumentStorage.Controllers
         };
 
         private readonly ILogger<WeatherForecastController> _logger;
-
-        public WeatherForecastController(ILogger<WeatherForecastController> logger)
+        private readonly DocumentStorageContext _dbContext;
+        public WeatherForecastController(ILogger<WeatherForecastController> logger, DocumentStorageContext dbContext)
         {
+            _dbContext = dbContext;
             _logger = logger;
         }
 
@@ -35,5 +36,11 @@ namespace DocumentStorage.Controllers
             })
             .ToArray();
         }
+        [HttpGet("GenDb")]
+        public async Task <IActionResult> GenDb() 
+        {
+            return Ok(await _dbContext.GetFullUsers());
+        }
+
     }
 }
