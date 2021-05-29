@@ -28,20 +28,28 @@ namespace DocumentStorage
 
             modelBuilder.Entity<Document>().HasMany(document => document.Tags).WithMany(tag => tag.Documents);
 
-            //modelBuilder.Entity<User>().HasData(
-            //    new User() 
-            //    { 
-            //        Id = Guid.NewGuid(),
-            //        Password = "avavav",
-            //        Username = "Sanya"
-            //    },
-            //    new User()
-            //    {
-            //        Id = Guid.NewGuid(),
-            //        Password = "avavav1",
-            //        Username = "Liza"
-            //    }
-            //    );
+            modelBuilder.Entity<Role>().HasData(
+                new Role()
+                {
+                    Id = Guid.NewGuid(),
+                    Name = "Директор"
+                },
+                new Role()
+                {
+                    Id = Guid.NewGuid(),
+                    Name = "Делопроизваодитель"
+                },
+                new Role()
+                {
+                    Id = Guid.NewGuid(),
+                    Name = "Методист"
+                },
+                new Role()
+                {
+                    Id = Guid.NewGuid(),
+                    Name = "Художественный руководитель"
+                }
+                );
         }
 
         public async Task<List<Document>> GetFullDocuments() 
