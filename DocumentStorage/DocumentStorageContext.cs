@@ -72,6 +72,13 @@ namespace DocumentStorage
             return await Users.Include(user => user.Role).FirstOrDefaultAsync(user => id == user.Id);
         }
 
+        //TODO: отрефакторить
+        public async Task<List<Document>> SearchDocumentByName(string query) 
+        {
+            query = query.ToLower();
+            return await Documents.Include(document => document.Tags).Where(document => document.Name.ToLower().Contains(query)).ToListAsync();
+        }
+
 
     }
 
