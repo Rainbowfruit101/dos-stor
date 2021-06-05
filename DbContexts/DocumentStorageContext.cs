@@ -77,42 +77,6 @@ namespace DbContexts
             return await Users.Include(user => user.Role).FirstOrDefaultAsync(user => id == user.Id);
         }
 
-        //TODO: отрефакторить
-        public async Task<List<Document>> SearchDocumentByName(string query) 
-        {
-            query = query.ToLower();
-            return await Documents.Include(document => document.Tags).Where(document => document.Name.ToLower().Contains(query)).ToListAsync();
-        }
-
-        public async Task<List<Document>> SearchDocumentByDate(DateSearchViewModel model)
-        {
-            return await Documents.Where(document => Helpers.CheckDate(document.CreationTime, model)).ToListAsync();
-        }
-
-        public async Task<List<Document>> SearchDocumentsByTags(TagSearchViewModel model)
-        {
-            return model.Mode == TagSearchMode.Any ? await SearchDocumentsByAnyTags(model.Tags) : await SearchDocumentsByExactTags(model.Tags);
-            
-        }
-        public async Task<List<Document>> SearchDocumentsByAnyTags(List<Tag> tags) 
-        {
-            var requestedTagIds = tags.Select(tag => tag.Id);
-            return Tags.Include(tag => tag.Documents)
-                .Where(tag => requestedTagIds.Contains(tag.Id))
-                .Select(tag => tag.Documents)
-                .Aggregate((accumulated,current)=> accumulated.Concat(current).ToList()); //функция сокращения Reduce
-        }
-
-        public async Task<List<Document>> SearchDocumentsByExactTags(List<Tag> tags)
-        {
-            var requestedTagIds = tags.Select(tag => tag.Id);
-            var requestedCount = requestedTagIds.Count();
-            return await Documents
-                .Where(doc => requestedCount == doc.Tags
-                    .Select(tag => tag.Id)
-                    .Intersect(requestedTagIds)
-                    .Count())
-                .ToListAsync();
-        }
+        
     }
 }

@@ -3,7 +3,7 @@ using ViewModels;
 using System;
 using System.Collections.Generic;
 
-namespace DbContexts
+namespace Services
 {
     public static class Helpers
     {
