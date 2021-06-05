@@ -1,11 +1,8 @@
-﻿using DocumentStorage.Enums;
+﻿using Models.Enums;
 using Models;
-using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
-namespace DocumentStorage.Models
+namespace ViewModels
 {
     public class TagSearchViewModel
     {

@@ -1,5 +1,5 @@
-﻿using DocumentStorage.Enums;
-using DocumentStorage.Models;
+﻿using Models.Enums;
+using ViewModels;
 using Microsoft.EntityFrameworkCore;
 using Models;
 using System;
@@ -8,7 +8,7 @@ using System.Linq;
 using System.Threading.Tasks;
 
 
-namespace DocumentStorage
+namespace DbContexts
 {
     public class DocumentStorageContext: DbContext
     {

@@ -1,11 +1,9 @@
-﻿using DocumentStorage.Enums;
-using DocumentStorage.Models;
+﻿using Models.Enums;
+using ViewModels;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
-namespace DocumentStorage
+namespace DbContexts
 {
     public static class Helpers
     {
