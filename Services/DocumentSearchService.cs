@@ -33,7 +33,6 @@ namespace Services
         public async Task<List<Document>> SearchDocumentsByTags(TagSearchViewModel model)
         {
             return model.Mode == TagSearchMode.Any ? await SearchDocumentsByAnyTags(model.Tags) : await SearchDocumentsByExactTags(model.Tags);
-
         }
 
         public async Task<List<Document>> SearchDocumentsByAnyTags(List<Tag> tags)
