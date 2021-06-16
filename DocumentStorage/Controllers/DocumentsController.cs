@@ -42,20 +42,61 @@ namespace DocumentStorage.Controllers
                 return NotFound();
             }
 
-            return Ok(document);
+            //TODO: Add View <-> Model mappers сейчас можешь наскринить то что сделал .ща покажу запросы в посмане
+            return Ok(new
+            {
+                id = document.Id,
+                name = document.Name,
+                creationTime = document.CreationTime,
+                tags = document.Tags.Select(t => new TagView() { Name = t.Name })
+            });
         }
 
         //http://localhost:5000/api/documents
         [HttpPost]
-        public async Task<IActionResult> Add([FromBody] Document document)
+        public async Task<IActionResult> Add([FromBody] DocumentView documentView)
         {
-            document.Id = Guid.NewGuid();
-            document.CreationTime = DateTime.Now;
+            var document = new Document
+            {
+                Id = Guid.NewGuid(),
+                Name = documentView.Name,
+                CreationTime = DateTime.Now,
+                Tags = await ConvertTags(documentView.Tags)
+            };
 
             var savedDocument = _documentStorage.Add(document).Entity;
             await _documentStorage.SaveChangesAsync();
+            
+            //TODO: Add View <-> Model mappers
+            return Ok(new { 
+                id = savedDocument.Id, 
+                name = savedDocument.Name, 
+                creationTime = savedDocument.CreationTime, 
+                tags = savedDocument.Tags.Select(t => new TagView() { Name = t.Name })
+            });
+        }
 
-            return Ok(savedDocument);
+        private async Task<List<Tag>> ConvertTags(List<TagView> tagViews)
+        {
+            var tags = new List<Tag>();
+            foreach (var tagView in tagViews)
+            {
+                var tag = await _documentStorage.FindTagByName(tagView.Name);
+                if(tag == null)
+                {
+                    tags.Add(new Tag()
+                    {
+                        Id = Guid.NewGuid(),
+                        Name = tagView.Name
+                    });
+                }
+                else
+                {
+                    tags.Add(tag);
+                }
+            }
+
+            return tags;
         }
 
         //http://localhost:5000/api/documents
@@ -85,7 +126,8 @@ namespace DocumentStorage.Controllers
             return Ok(deletedDocument);
         }
 
-
+        /*
+        вынести не забудь
         //TODO: Refactor to search controller (api/documents/search)
         //http://localhost:5000/api/documents/search?query=docname
         [HttpGet]
@@ -112,5 +154,6 @@ namespace DocumentStorage.Controllers
 
             return Ok(await _documentSearchService.SearchDocumentsByTags(searchModel));
         }
+        */
     }
 }

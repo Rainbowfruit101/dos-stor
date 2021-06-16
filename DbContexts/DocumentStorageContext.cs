@@ -77,6 +77,6 @@ namespace DbContexts
             return await Users.Include(user => user.Role).FirstOrDefaultAsync(user => id == user.Id);
         }
 
-        
+        public async Task<Tag> FindTagByName(string name) => await Tags.FirstOrDefaultAsync(t => t.Name == name);
     }
 }
