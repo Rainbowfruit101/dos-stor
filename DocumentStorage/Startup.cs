@@ -15,6 +15,9 @@ using System.IO;
 using System.Linq;
 using System.Text.Json.Serialization;
 using System.Threading.Tasks;
+using Mappers;
+using Models;
+using ViewModels.Views;
 
 namespace DocumentStorage
 {
@@ -44,6 +47,12 @@ namespace DocumentStorage
 
             services.AddScoped<FileExtensionContentTypeProvider>();
             services.AddScoped<DocumentSearchService>();
+
+            services.AddSingleton<IMapper<User, UserView>, UserMapper>();
+            services.AddSingleton<IMapper<Role, RoleView>, RoleMapper>();
+            services.AddSingleton<IMapper<Document, DocumentView>, DocumentMapper>();
+            services.AddSingleton<IMapper<Tag, TagView>, TagMapper>();
+
             services.AddScoped<DocumentFileService>(options =>
             {
                 var rootDirectoryPath = Configuration["RootDirectory"];

@@ -1,6 +1,6 @@
-﻿using Models.Enums;
-using Models;
+﻿using Models;
 using System.Collections.Generic;
+using ViewModels.Enums;
 
 namespace ViewModels
 {

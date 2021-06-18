@@ -1,4 +1,4 @@
-﻿namespace Models.Enums
+﻿namespace ViewModels.Enums
 {
     public enum ComparisonMode
     {

@@ -8,10 +8,15 @@ namespace Models
     {
         [Required]
         public Guid Id {get; set;}
+        
         [Required, StringLength(80)]
         public string Name { get; set; }
+        
         [Required]
         public DateTime CreationTime { get; set; }
+        
         public List<Tag> Tags { get; set; }
+        
+        public List<Role> OwnRoles { get; set; }
     }
 }

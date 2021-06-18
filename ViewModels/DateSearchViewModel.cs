@@ -1,5 +1,5 @@
-﻿using Models.Enums;
-using System;
+﻿using System;
+using ViewModels.Enums;
 
 namespace ViewModels
 {
