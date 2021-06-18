@@ -39,6 +39,7 @@ namespace DocumentStorage
             services.AddDbContext<DocumentStorageContext>(options => 
             {
                 options.UseSqlServer(Configuration.GetConnectionString("Database"));
+                //options.UseSqlServer("data source=localhost;initial catalog=DocumentsStorageDB;Trusted_connection=True;");
             });
 
             services.AddScoped<FileExtensionContentTypeProvider>();
@@ -58,10 +59,7 @@ namespace DocumentStorage
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
-            if (env.IsDevelopment())
-            {
-                app.UseDeveloperExceptionPage();
-            }
+            app.UseDeveloperExceptionPage();
 
             app.UseRouting();
 
@@ -69,7 +67,7 @@ namespace DocumentStorage
 
             app.UseEndpoints(endpoints =>
             {
-                endpoints.MapControllers();
+                endpoints.MapDefaultControllerRoute();
             });
         }
     }
