@@ -25,12 +25,16 @@ namespace Mappers
 
         public async Task<Tag> ToModel(TagView view)
         {
-            var existingTag = await _dbContext.GetFullTag(view.Id);
+            var existingTag = await _dbContext.FindTagByName(view.Name);
+            if (existingTag != null)
+                return existingTag;
+
+            existingTag = await _dbContext.GetFullTag(view.Id);
             return new Tag()
             {
                 Id = view.Id,
                 Name = view.Name,
-                Documents = existingTag.Documents
+                Documents = existingTag?.Documents
             };
         }
     }

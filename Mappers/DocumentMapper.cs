@@ -1,8 +1,6 @@
 ﻿using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 using Models;
-using ViewModels;
 using ViewModels.Views;
 
 namespace Mappers
@@ -45,15 +43,21 @@ namespace Mappers
         public async Task<Document> ToModel(DocumentView view)
         {
             var tags = new List<Tag>();
-            foreach (var tagView in view.Tags)
+            if (view.Tags != null)
             {
-                tags.Add(await _tagMapper.ToModel(tagView));
+                foreach (var tagView in view.Tags)
+                {
+                    tags.Add(await _tagMapper.ToModel(tagView));
+                }
             }
-            
+
             var roles = new List<Role>();
-            foreach (var roleView in view.OwnRoles)
+            if (view.OwnRoles != null)
             {
-                roles.Add(await _roleMapper.ToModel(roleView));
+                foreach (var roleView in view.OwnRoles)
+                {
+                    roles.Add(await _roleMapper.ToModel(roleView));
+                }
             }
 
             return new Document()

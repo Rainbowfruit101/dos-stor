@@ -1,9 +1,8 @@
-﻿using Microsoft.EntityFrameworkCore;
-using Models;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-
+using Microsoft.EntityFrameworkCore;
+using Models;
 
 namespace DbContexts
 {
@@ -22,36 +21,48 @@ namespace DbContexts
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<Document>().HasKey(model => model.Id);
-            modelBuilder.Entity<User>().HasKey(model => model.Id);
-            modelBuilder.Entity<Tag>().HasKey(model => model.Id);
-            modelBuilder.Entity<Role>().HasKey(model => model.Id);
-            modelBuilder.Entity<User>().HasIndex(user => user.Username).IsUnique();
-            modelBuilder.Entity<User>().HasOne(user => user.Role);
-
             modelBuilder.Entity<Document>().HasMany(document => document.Tags).WithMany(tag => tag.Documents);
+            modelBuilder.Entity<Document>().HasMany(document => document.OwnRoles).WithMany(role => role.AllowDocuments);
+            
+            modelBuilder.Entity<Tag>().HasKey(model => model.Id);
+            
+            modelBuilder.Entity<User>().HasKey(model => model.Id);
+            modelBuilder.Entity<User>().HasIndex(user => user.Username).IsUnique();
+            modelBuilder.Entity<User>().HasOne(user => user.Role).WithMany(role => role.Users);
 
-            modelBuilder.Entity<Role>().HasData(
-                new Role()
+            modelBuilder.Entity<Role>().HasKey(model => model.Id);
+
+            var director = new Role()
+            {
+                Id = Guid.NewGuid(),
+                Name = "Директор"
+            };
+            var worker = new Role()
+            {
+                Id = Guid.NewGuid(),
+                Name = "Делопроизваодитель"
+            };
+            var meth = new Role()
+            {
+                Id = Guid.NewGuid(),
+                Name = "Методист"
+            };
+            var hudruk = new Role()
+            {
+                Id = Guid.NewGuid(),
+                Name = "Художественный руководитель"
+            };
+            modelBuilder.Entity<Role>().HasData(director, worker, meth, hudruk);
+
+            modelBuilder.Entity<User>().HasData(
+                new User()
                 {
                     Id = Guid.NewGuid(),
-                    Name = "Директор"
-                },
-                new Role()
-                {
-                    Id = Guid.NewGuid(),
-                    Name = "Делопроизваодитель"
-                },
-                new Role()
-                {
-                    Id = Guid.NewGuid(),
-                    Name = "Методист"
-                },
-                new Role()
-                {
-                    Id = Guid.NewGuid(),
-                    Name = "Художественный руководитель"
+                    Username = "Some user 1",
+                    Password = "qqswqgz3DUsPnFxjHzkAxmFVCNBemPLgOHjKGv4xfBI=",
+                    //CurrentRole = worker
                 }
-                );
+            );
         }
 
         public async Task<List<Document>> GetFullDocuments() 
@@ -66,7 +77,10 @@ namespace DbContexts
 
         public async Task<Document> GetFullDocument(Guid id)
         {
-            return await Documents.Include(document => document.Tags).FirstOrDefaultAsync(doc => id == doc.Id);
+            return await Documents
+                .Include(document => document.Tags)
+                .Include(document => document.OwnRoles)
+                .FirstOrDefaultAsync(doc => id == doc.Id);
         }
 
         public async Task<User> GetFullUser(Guid id)
