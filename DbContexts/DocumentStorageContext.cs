@@ -56,7 +56,7 @@ namespace DbContexts
 
         public async Task<List<Document>> GetFullDocuments() 
         {
-            return await Documents.Include(document => document.Tags).ToListAsync();
+            return await Documents.Include(document => document.Tags).Include(document => document.OwnRoles).ToListAsync();
         }
 
         public async Task<List<User>> GetFullUsers()

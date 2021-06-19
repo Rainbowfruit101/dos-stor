@@ -29,14 +29,13 @@ namespace Mappers
         public async Task<User> ToModel(UserView view)
         {
             var existingUser = await _dbContext.GetFullUser(view.Id);
-            var existingRole = await _dbContext.GetFullRole(view.Role.Id);
-
+            
             return new User()
             {
                 Id = view.Id,
                 Username = view.Username,
                 Password = existingUser?.Password,
-                Role = existingRole
+                Role = await _roleMapper.ToModel(view.Role)
             };
         }
     }

@@ -32,7 +32,8 @@ namespace DocumentStorage.Controllers
         [HttpGet]
         public async Task<IActionResult> Index()
         {
-            return Ok(await _documentStorage.Documents.ToListAsync());
+            var documents = await _documentStorage.GetFullDocuments();
+            return Ok(await ConvertDocumentsToDocumentViews(documents));
         }
 
         //http://localhost:5000/api/documents/89809-ajsd-aksd43
@@ -45,7 +46,7 @@ namespace DocumentStorage.Controllers
                 return NotFound();
             }
 
-            return Ok(_documentMapper.ToView(document));
+            return Ok(await _documentMapper.ToView(document));
         }
 
         //http://localhost:5000/api/documents
@@ -57,7 +58,7 @@ namespace DocumentStorage.Controllers
             var savedDocument = _documentStorage.Add(document).Entity;
             await _documentStorage.SaveChangesAsync();
             
-            return Ok(_documentMapper.ToView(savedDocument));
+            return Ok(await _documentMapper.ToView(savedDocument));
         }
 
         //http://localhost:5000/api/documents
@@ -85,7 +86,19 @@ namespace DocumentStorage.Controllers
             _documentStorage.Remove(deletedDocument);
             await _documentStorage.SaveChangesAsync();
 
-            return Ok(_documentMapper.ToView(deletedDocument));
+            return Ok(await _documentMapper.ToView(deletedDocument));
+        }
+
+        private async Task<List<DocumentView>> ConvertDocumentsToDocumentViews(List<Document> documents)
+        {
+            var result = new List<DocumentView>();
+
+            foreach (var document in documents)
+            {
+                result.Add(await _documentMapper.ToView(document));
+            }
+
+            return result;
         }
     }
 }
