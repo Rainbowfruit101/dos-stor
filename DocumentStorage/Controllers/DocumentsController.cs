@@ -18,16 +18,14 @@ namespace DocumentStorage.Controllers
     {
         private readonly DocumentStorageContext _dbContext;
         private readonly DocumentFileService _documentFileService;
-        private readonly UserService _userService;
         
         private readonly IMapper<Document, DocumentView> _documentMapper;
 
-        public DocumentsController(DocumentStorageContext dbContext, DocumentFileService documentFileService, IMapper<Document, DocumentView> documentMapper, UserService userService)
+        public DocumentsController(DocumentStorageContext dbContext, DocumentFileService documentFileService, IMapper<Document, DocumentView> documentMapper)
         {
             _dbContext = dbContext;
             _documentFileService = documentFileService;
             _documentMapper = documentMapper;
-            _userService = userService;
         }
 
         [Authorize]
