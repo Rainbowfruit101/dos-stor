@@ -74,6 +74,16 @@ namespace DbContexts
             return await Users.Include(user => user.Role).FirstOrDefaultAsync(user => id == user.Id);
         }
 
+        public async Task<Tag> GetFullTag(Guid id)
+        {
+            return await Tags.Include(t => t.Documents).FirstOrDefaultAsync(t => t.Id == id);
+        }
+        
+        public async Task<Role> GetFullRole(Guid id)
+        {
+            return await Roles.Include(r => r.AllowDocuments).FirstOrDefaultAsync(r => r.Id == id);
+        }
+        
         public async Task<Tag> FindTagByName(string name) => await Tags.FirstOrDefaultAsync(t => t.Name == name);
     }
 }

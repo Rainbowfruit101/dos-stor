@@ -1,7 +1,7 @@
-﻿using Models.Enums;
-using ViewModels;
+﻿using ViewModels;
 using System;
 using System.Collections.Generic;
+using ViewModels.Enums;
 
 namespace Services
 {

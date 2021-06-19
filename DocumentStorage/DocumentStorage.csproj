@@ -11,6 +11,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\DbContexts\DbContexts.csproj" />
+    <ProjectReference Include="..\Mappers\Mappers.csproj" />
     <ProjectReference Include="..\Models\Models.csproj" />
     <ProjectReference Include="..\Services\Services.csproj" />
   </ItemGroup>
