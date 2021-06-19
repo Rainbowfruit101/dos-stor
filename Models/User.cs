@@ -11,9 +11,17 @@ namespace Models
         [Required, StringLength(25)]
         public string Username { get; set; }
         
-        [Required, StringLength(25,MinimumLength = 8)]
+        [Required]
         public string Password { get; set; }
         
         public Role Role { get; set; }
+
+        public override bool Equals(object? obj)
+        {
+            if (obj is User user)
+                return user.Id == Id;
+
+            return false;
+        }
     }
 }

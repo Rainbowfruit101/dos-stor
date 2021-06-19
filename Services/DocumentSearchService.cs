@@ -1,10 +1,9 @@
-﻿using DbContexts;
-using Microsoft.EntityFrameworkCore;
-using Models;
-using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using DbContexts;
+using Microsoft.EntityFrameworkCore;
+using Models;
 using ViewModels;
 using ViewModels.Enums;
 
@@ -37,22 +36,16 @@ namespace Services
 
         public async Task<List<Document>> SearchDocumentsByAnyTags(List<Tag> tags)
         {
-            var requestedTagIds = tags.Select(tag => tag.Id);
             return _documentStorage.Tags.Include(tag => tag.Documents)
-                .Where(tag => requestedTagIds.Contains(tag.Id))
+                .Where(tag => tags.Contains(tag))
                 .Select(tag => tag.Documents)
                 .Aggregate((accumulated, current) => accumulated.Concat(current).ToList()); //функция сокращения Reduce
         }
 
         public async Task<List<Document>> SearchDocumentsByExactTags(List<Tag> tags)
         {
-            var requestedTagIds = tags.Select(tag => tag.Id);
-            var requestedCount = requestedTagIds.Count();
             return await _documentStorage.Documents
-                .Where(doc => requestedCount == doc.Tags
-                    .Select(tag => tag.Id)
-                    .Intersect(requestedTagIds)
-                    .Count())
+                .Where(doc => tags.Count == doc.Tags.Intersect(tags).Count())
                 .ToListAsync();
         }
     }

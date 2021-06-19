@@ -18,5 +18,13 @@ namespace Models
         public List<Tag> Tags { get; set; }
         
         public List<Role> OwnRoles { get; set; }
+        
+        public override bool Equals(object? obj)
+        {
+            if (obj is Document document)
+                return document.Id == Id;
+
+            return false;
+        }
     }
 }

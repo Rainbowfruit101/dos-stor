@@ -1,22 +1,17 @@
+using System.IO;
+using System.Text.Json.Serialization;
 using DbContexts;
+using Mappers;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.StaticFiles;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Logging;
-using Services;
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Text.Json.Serialization;
-using System.Threading.Tasks;
-using Mappers;
+using Microsoft.IdentityModel.Tokens;
 using Models;
+using Services;
 using ViewModels.Views;
 
 namespace DocumentStorage
@@ -48,11 +43,17 @@ namespace DocumentStorage
             services.AddScoped<FileExtensionContentTypeProvider>();
             services.AddScoped<DocumentSearchService>();
 
-            services.AddSingleton<IMapper<User, UserView>, UserMapper>();
-            services.AddSingleton<IMapper<Role, RoleView>, RoleMapper>();
-            services.AddSingleton<IMapper<Document, DocumentView>, DocumentMapper>();
-            services.AddSingleton<IMapper<Tag, TagView>, TagMapper>();
+            services.AddScoped<IMapper<User, UserView>, UserMapper>();
+            services.AddScoped<IMapper<Role, RoleView>, RoleMapper>();
+            services.AddScoped<IMapper<Document, DocumentView>, DocumentMapper>();
+            services.AddScoped<IMapper<Tag, TagView>, TagMapper>();
 
+            services.AddScoped<UserService>(options =>
+            {
+                var dbContext = options.GetService<DocumentStorageContext>();
+                return new UserService(dbContext, Configuration["PasswordHashSalt"]);
+            });
+            
             services.AddScoped<DocumentFileService>(options =>
             {
                 var rootDirectoryPath = Configuration["RootDirectory"];
@@ -63,6 +64,26 @@ namespace DocumentStorage
 
                 return new DocumentFileService(new DirectoryInfo(rootDirectoryPath));
             });
+            
+            services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+                .AddJwtBearer(options =>
+                {
+                    options.RequireHttpsMetadata = false;
+                    options.TokenValidationParameters = new TokenValidationParameters
+                    {
+                        ValidateLifetime = true, // будет ли валидироваться время существования
+                        
+                        ValidateIssuer = true, // укзывает, будет ли валидироваться издатель при валидации токена
+                        ValidIssuer = AuthOptions.Issuer, // строка, представляющая издателя
+                        
+                        ValidateAudience = true, // будет ли валидироваться потребитель токена
+                        ValidAudience = AuthOptions.Audience, // установка потребителя токена
+                        
+                        ValidateIssuerSigningKey = true, // валидация ключа безопасности
+                        IssuerSigningKey = AuthOptions.GetSymmetricSecurityKey(), // установка ключа безопасности
+                        
+                    };
+                });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -72,6 +93,7 @@ namespace DocumentStorage
 
             app.UseRouting();
 
+            app.UseAuthentication();
             app.UseAuthorization();
 
             app.UseEndpoints(endpoints =>

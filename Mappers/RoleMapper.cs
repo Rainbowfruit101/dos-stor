@@ -30,7 +30,8 @@ namespace Mappers
             {
                 Id = view.Id,
                 Name = view.Name,
-                AllowDocuments = existingRole.AllowDocuments
+                AllowDocuments = existingRole.AllowDocuments,
+                Users = existingRole.Users
             };
         }
     }
