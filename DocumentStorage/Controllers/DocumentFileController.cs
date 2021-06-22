@@ -19,9 +19,9 @@ namespace DocumentStorage.Controllers
         private readonly DocumentStorageContext _dbContext;
         private readonly FileExtensionContentTypeProvider _contentTypeProvider;
 
-        private readonly IMapper<Document, DocumentView> _documentMapper;
+        private readonly IMapper<Document, TagView> _documentMapper;
 
-        public DocumentFileController(DocumentFileService documentFileService, DocumentStorageContext dbContext, FileExtensionContentTypeProvider contentTypeProvider, IMapper<Document, DocumentView> documentMapper)
+        public DocumentFileController(DocumentFileService documentFileService, DocumentStorageContext dbContext, FileExtensionContentTypeProvider contentTypeProvider, IMapper<Document, TagView> documentMapper)
         {
             _documentFileService = documentFileService;
             _dbContext = dbContext;

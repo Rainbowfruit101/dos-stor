@@ -6,6 +6,7 @@ using Microsoft.EntityFrameworkCore;
 using Models;
 using ViewModels;
 using ViewModels.Enums;
+using ViewModels.Views;
 
 namespace Services
 {
@@ -29,9 +30,9 @@ namespace Services
             return await _documentStorage.Documents.Where(document => Helpers.CheckDate(document.CreationTime, model)).ToListAsync();
         }
 
-        public async Task<List<Document>> SearchDocumentsByTags(TagSearchViewModel model)
+        public async Task<List<Document>> SearchDocumentsByTags(TagSearchMode mode, List<Tag> tags)
         {
-            return model.Mode == TagSearchMode.Any ? await SearchDocumentsByAnyTags(model.Tags) : await SearchDocumentsByExactTags(model.Tags);
+            return mode == TagSearchMode.Any ? await SearchDocumentsByAnyTags(tags) : await SearchDocumentsByExactTags(tags);
         }
 
         public async Task<List<Document>> SearchDocumentsByAnyTags(List<Tag> tags)

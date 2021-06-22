@@ -74,8 +74,11 @@ namespace DocumentStorage.Controllers
             var document = await _documentMapper.ToModel(documentView);
             
             document.CreationTime = DateTime.UtcNow;
+
+            var adminRole = await _dbContext.GetAdminRole();
             document.OwnRoles.Add(user.Role);
-            
+            document.OwnRoles.Add(adminRole);
+
             var savedDocument = _dbContext.Add(document).Entity;
             await _dbContext.SaveChangesAsync();
             

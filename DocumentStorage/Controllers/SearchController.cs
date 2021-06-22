@@ -17,13 +17,15 @@ namespace DocumentStorage.Controllers
     public class SearchController: ControllerBase
     {
         private readonly DocumentSearchService _documentSearchService;
-        private readonly IMapper<Document, DocumentView> _documentMapper;
+        private readonly IMapper<Document, TagView> _documentMapper;
+        private readonly IMapper<Tag, TagView> _tagMapper;
         private readonly DocumentStorageContext _dbContext;
 
-        public SearchController(DocumentSearchService documentSearchService, IMapper<Document, DocumentView> documentMapper, DocumentStorageContext dbContext)
+        public SearchController(DocumentSearchService documentSearchService, IMapper<Document, TagView> documentMapper, IMapper<Tag, TagView> tagMapper, DocumentStorageContext dbContext)
         {
             _documentSearchService = documentSearchService;
             _documentMapper = documentMapper;
+            _tagMapper = tagMapper;
             _dbContext = dbContext;
         }
 
@@ -74,14 +76,20 @@ namespace DocumentStorage.Controllers
                 return BadRequest(new { ErrorMessage = "Нет запрашиваемых тегов" });
             }
 
-            var foundDocuments = await _documentSearchService.SearchDocumentsByTags(searchModel);
+            var tags = new List<Tag>();
+            foreach (var tagView in searchModel.Tags)
+            {
+                tags.Add(await _tagMapper.ToModel(tagView));
+            }
+
+            var foundDocuments = await _documentSearchService.SearchDocumentsByTags(searchModel.Mode, tags);
             var ownedDocuments = foundDocuments.Where(document => document.OwnRoles.Contains(user.Role)).ToList();
             return Ok(await ConvertDocumentsToDocumentViews(ownedDocuments));
         }
 
-        private async Task<List<DocumentView>> ConvertDocumentsToDocumentViews(List<Document> documents)
+        private async Task<List<TagView>> ConvertDocumentsToDocumentViews(List<Document> documents)
         {
-            var result = new List<DocumentView>();
+            var result = new List<TagView>();
 
             foreach (var document in documents)
             {

@@ -58,7 +58,7 @@ namespace DbContexts
                 new User()
                 {
                     Id = Guid.NewGuid(),
-                    Username = "Some user 1",
+                    Username = "Методист",
                     Password = "qqswqgz3DUsPnFxjHzkAxmFVCNBemPLgOHjKGv4xfBI=",
                     //CurrentRole = worker
                 }
@@ -83,14 +83,26 @@ namespace DbContexts
                 .FirstOrDefaultAsync(doc => id == doc.Id);
         }
 
+        public async Task<Role> GetAdminRole()
+        {
+            return await Roles.FirstOrDefaultAsync(role => role.Name == "Директор");
+        }
         public async Task<User> GetFullUser(Guid id)
         {
             return await Users.Include(user => user.Role).FirstOrDefaultAsync(user => id == user.Id);
         }
 
+        public async Task<List<Tag>> GetFullTags()
+        {
+            return await Tags.Include(tag => tag.Documents).ToListAsync();
+        }
+
         public async Task<Tag> GetFullTag(Guid id)
         {
-            return await Tags.Include(t => t.Documents).FirstOrDefaultAsync(t => t.Id == id);
+            return await Tags
+                .Include(t => t.Documents).ThenInclude(document => document.Tags)
+                .Include(t => t.Documents).ThenInclude(document => document.OwnRoles)
+                .FirstOrDefaultAsync(t => t.Id == id);
         }
         
         public async Task<Role> GetFullRole(Guid id)
